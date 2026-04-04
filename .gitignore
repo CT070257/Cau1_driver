@@ -1,0 +1,21 @@
+# Bỏ qua các file biên dịch của C và Linux Kernel Driver
+*.o
+*.ko
+*.mod.c
+*.mod
+*.symvers
+*.order
+.*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+app_manager
+
+# Bỏ qua các file biên dịch của Java/Maven
+CipherGUI/target/
+*.class
+
+# Bỏ qua các file cấu hình máy cá nhân
+.vscode/
+.idea/
+*.log
