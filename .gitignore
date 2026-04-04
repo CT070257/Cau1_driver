@@ -10,7 +10,8 @@
 modules.order
 Module.symvers
 app_manager
-
+*.txt
+*.enc
 # Bỏ qua các file biên dịch của Java/Maven
 CipherGUI/target/
 *.class
