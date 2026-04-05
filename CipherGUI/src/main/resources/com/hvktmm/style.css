@@ -1,0 +1,84 @@
+/* Nền tảng chung cho ứng dụng */
+.root {
+    -fx-background-color: #f4f7f6;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Tiêu đề chính */
+.header-label {
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #2c3e50;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+/* Tiêu đề phụ */
+.sub-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-style: italic;
+}
+
+/* Khung danh sách file */
+.list-view {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1px;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);
+}
+
+/* Nút bấm cơ bản */
+.btn {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-padding: 10px 20px;
+    -fx-text-fill: white;
+}
+
+/* Nút Chọn File */
+.btn-select {
+    -fx-background-color: #34495e;
+    -fx-padding: 8px 15px;
+}
+.btn-select:hover {
+    -fx-background-color: #2c3e50;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* Nút Mã Hóa */
+.btn-encrypt {
+    -fx-background-color: #27ae60;
+}
+.btn-encrypt:hover {
+    -fx-background-color: #2ecc71;
+    -fx-effect: dropshadow(three-pass-box, rgba(39, 174, 96, 0.4), 10, 0, 0, 4);
+}
+
+/* Nút Giải Mã */
+.btn-decrypt {
+    -fx-background-color: #2980b9;
+}
+.btn-decrypt:hover {
+    -fx-background-color: #3498db;
+    -fx-effect: dropshadow(three-pass-box, rgba(41, 128, 185, 0.4), 10, 0, 0, 4);
+}
+
+/* Nút Chỉnh Sửa */
+.btn-edit {
+    -fx-background-color: #e67e22;
+}
+.btn-edit:hover {
+    -fx-background-color: #f39c12;
+    -fx-effect: dropshadow(three-pass-box, rgba(230, 126, 34, 0.4), 10, 0, 0, 4);
+}
+
+/* Nhãn trạng thái phía dưới */
+.status-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
