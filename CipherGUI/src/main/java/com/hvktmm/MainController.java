@@ -3,6 +3,7 @@ package com.hvktmm;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import java.io.File;
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ public class MainController {
     @FXML private Label statusLabel;
 
     private List<File> selectedFiles = new ArrayList<>();
-    // Đường dẫn trỏ ra thư mục chứa app_manager bằng C của bạn
     private final String WORKING_DIR = System.getProperty("user.home") + "/Btap_cuoi_ki_yc1";
 
     @FXML
@@ -34,6 +34,22 @@ public class MainController {
     }
 
     @FXML
+    private void handleSelectFolder() {
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("Chọn thư mục để xử lý");
+        File dir = dirChooser.showDialog(listViewFiles.getScene().getWindow());
+
+        if (dir != null) {
+            selectedFiles.clear();
+            listViewFiles.getItems().clear();
+            selectedFiles.add(dir);
+            listViewFiles.getItems().add("[Thư mục] " + dir.getName());
+            statusLabel.setText("Đã chọn thư mục: " + dir.getName());
+            statusLabel.setStyle("-fx-text-fill: black;");
+        }
+    }
+
+    @FXML
     private void handleEncrypt() { executeCommand("-enc"); }
 
     @FXML
@@ -44,15 +60,29 @@ public class MainController {
         if (selectedFiles.size() == 1) {
             executeCommand("-edit");
         } else {
-            statusLabel.setText("Lỗi: Chỉ chọn 1 file để sửa!");
+            statusLabel.setText("Lỗi: Chỉ chọn 1 đối tượng để sửa!");
             statusLabel.setStyle("-fx-text-fill: red;");
         }
     }
 
-    // Hàm gọi tiến trình C backend
-    private void executeCommand(String mode) {
+    private void executeCommand(String baseMode) {
         if (selectedFiles.isEmpty()) {
-            statusLabel.setText("Vui lòng chọn file trước!");
+            statusLabel.setText("Vui lòng chọn đối tượng trước!");
+            statusLabel.setStyle("-fx-text-fill: red;");
+            return;
+        }
+
+        String mode = baseMode;
+        boolean isDir = selectedFiles.get(0).isDirectory();
+        boolean isTarEnc = selectedFiles.get(0).getName().endsWith(".tar.enc");
+
+        // Chuyển đổi lệnh nếu đối tượng là thư mục hoặc file nén của thư mục
+        if (baseMode.equals("-enc") && isDir) mode = "-enc-dir";
+        else if (baseMode.equals("-dec") && isTarEnc) mode = "-dec-dir";
+
+        // Chặn chỉnh sửa nếu là thư mục
+        if (baseMode.equals("-edit") && (isDir || isTarEnc)) {
+            statusLabel.setText("Lỗi: Không thể dùng Nano để sửa trực tiếp thư mục!");
             statusLabel.setStyle("-fx-text-fill: red;");
             return;
         }
@@ -62,7 +92,6 @@ public class MainController {
             
             if (mode.equals("-edit")) {
                 String targetFile = selectedFiles.get(0).getAbsolutePath();
-                // Bật cửa sổ terminal Ubuntu mới để chạy nano
                 pb = new ProcessBuilder("gnome-terminal", "--", "bash", "-c", 
                                         "./app_manager -edit '" + targetFile + "'; echo 'Xong! Bấm Enter để đóng...'; read");
             } else {
@@ -77,26 +106,22 @@ public class MainController {
             Process process = pb.start();
             
             if (!mode.equals("-edit")) {
-                // Mã hóa / Giải mã: Đợi C chạy xong rồi kiểm tra kết quả
                 int exitCode = process.waitFor();
                 if (exitCode == 0) {
                     statusLabel.setText("Xử lý thành công!");
                     statusLabel.setStyle("-fx-text-fill: green;");
-                    openFileManager(); // Mở thư mục để xem kết quả
+                    openFileManager(); 
                 } else {
                     statusLabel.setText("Tiến trình C báo lỗi (Code: " + exitCode + ")");
                     statusLabel.setStyle("-fx-text-fill: red;");
                 }
             } else {
-                // Chỉnh sửa: Báo trạng thái và đợi quá trình đóng terminal hoàn tất
                 statusLabel.setText("Đang mở cửa sổ Terminal để chỉnh sửa...");
                 statusLabel.setStyle("-fx-text-fill: blue;");
                 
                 process.waitFor();
                 statusLabel.setText("Vui lòng thao tác sửa file trên Terminal!");
                 statusLabel.setStyle("-fx-text-fill: green;");
-                
-                // ĐÃ XÓA hàm openFileManager() ở đây để không làm phiền khi bạn đang sửa
             }
 
         } catch (Exception e) {
@@ -106,7 +131,6 @@ public class MainController {
         }
     }
 
-    // Hàm tự động gọi trình quản lý file của Ubuntu
     private void openFileManager() {
         if (selectedFiles.isEmpty()) return;
         try {
